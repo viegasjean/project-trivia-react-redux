@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import tokenAction from '../redux/actions';
 
 class Login extends Component {
   constructor() {
@@ -18,6 +21,21 @@ class Login extends Component {
     const { name, email } = this.state;
     console.log('group34');
     return name && email;
+  };
+
+  handleRequest = async () => {
+    const { sendToken } = this.props;
+    const url = 'https://opentdb.com/api_token.php?command=request';
+    const reponse = await fetch(url);
+    const data = await reponse.json();
+    return sendToken(data.token);
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const { history } = this.props;
+    history.push('./playgame');
+    this.handleRequest();
   };
 
   render() {
@@ -43,6 +61,7 @@ class Login extends Component {
           type="submit"
           data-testid="btn-play"
           disabled={ !this.handleDisabled() }
+          onClick={ this.handleSubmit }
         >
           Play
         </button>
@@ -51,4 +70,12 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const mapDispatchToProps = (dispatch) => ({
+  sendToken: (token) => dispatch(tokenAction(token)),
+});
+
+Login.propTypes = {
+  history: PropTypes.func,
+}.isRequired;
+
+export default connect(null, mapDispatchToProps)(Login);
