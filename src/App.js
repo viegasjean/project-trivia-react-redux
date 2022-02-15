@@ -5,7 +5,7 @@ import './App.css';
 export default function App() {
   return (
     <div className="App">
-      Grupo 34
+      Grupo 34 ---
     </div>
   );
 }
