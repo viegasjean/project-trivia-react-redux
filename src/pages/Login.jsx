@@ -85,6 +85,8 @@ Login.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+  infoPlayer: PropTypes.func.isRequired,
+  sendToken: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => ({

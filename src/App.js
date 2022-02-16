@@ -7,7 +7,6 @@ import Settings from './pages/Settings';
 
 import Game from './pages/Game';
 
-
 export default function App() {
   return (
     <div className="App">
