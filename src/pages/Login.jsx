@@ -40,6 +40,7 @@ class Login extends Component {
   };
 
   render() {
+    const { history } = this.props;
     return (
       <form>
         <label htmlFor="name">
@@ -68,18 +69,27 @@ class Login extends Component {
         >
           Play
         </button>
+        <button
+          type="button"
+          data-testid="btn-settings"
+          onClick={ () => history.push('/settings') }
+        >
+          Settings
+        </button>
       </form>
     );
   }
 }
 
+Login.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
 const mapDispatchToProps = (dispatch) => ({
   sendToken: (token) => dispatch(tokenAction(token)),
   infoPlayer: (info) => dispatch(playerAction(info)),
 });
-
-Login.propTypes = {
-  history: PropTypes.func,
-}.isRequired;
 
 export default connect(null, mapDispatchToProps)(Login);
