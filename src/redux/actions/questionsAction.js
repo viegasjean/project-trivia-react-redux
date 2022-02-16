@@ -16,7 +16,8 @@ function fetchQuestionsAction(token) {
     try {
       const response = await fetch(`https://opentdb.com/api.php?amount=5&token=${token}`);
       const data = await response.json();
-      return dispatch(getQuestions(data));
+      console.log(data);
+      return dispatch(getQuestions(data.results));
     } catch (error) {
       // dispatch(failedRequest(error));
     }
