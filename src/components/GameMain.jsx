@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import fetchQuestionsAction from '../redux/actions/questionsAction';
 
 class GameMain extends Component {
-
   componentDidMount() {
     this.getQuestions();
   }
@@ -12,8 +11,8 @@ class GameMain extends Component {
   getQuestions = () => {
     const token = localStorage.getItem('teken');
     console.log(token);
-    const { state } = this.props;
-    console.log(state);
+    // const { state } = this.props;
+    // console.log(state);
     const { fetchQuestionsApi } = this.props;
     fetchQuestionsApi(token);
   }
@@ -34,5 +33,9 @@ const mapStateToProps = (state) => ({ state });
 const mapDispatchToProps = (dispatch) => ({
   fetchQuestionsApi: (token) => dispatch(fetchQuestionsAction(token)),
 });
+
+GameMain.propTypes = {
+  fetchQuestionsApi: PropTypes.func,
+}.isRequired;
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameMain);
