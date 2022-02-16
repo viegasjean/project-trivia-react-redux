@@ -1,10 +1,7 @@
 import { TOKEN_PLAYER } from '../actions';
 
 const INITIAL_STATE = {
-  // name: '',
-  // assertions: '',
-  // score: '',
-  // gravatarEmail: '',
+  token: '',
 };
 
 const token = (state = INITIAL_STATE, action) => {

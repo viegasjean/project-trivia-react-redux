@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+// import { connect } from 'react-redux';
+// import PropTypes from 'prop-types';
 import GameMain from '../components/GameMain';
+import GameHeader from '../components/GameHeader';
 
 class Game extends Component {
   render() {
     return (
-      <GameMain />
+      <section>
+        <GameHeader />
+        <GameMain />
+      </section>
     );
   }
 }

@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import tokenAction from '../redux/actions';
+import tokenAction, { playerAction } from '../redux/actions';
 
 class Login extends Component {
   constructor() {
     super();
     this.state = {
       name: '',
-      email: '',
+      gravatarEmail: '',
     };
   }
 
@@ -18,9 +18,8 @@ class Login extends Component {
   };
 
   handleDisabled = () => {
-    const { name, email } = this.state;
-    console.log('group34');
-    return name && email;
+    const { name, gravatarEmail } = this.state;
+    return name && gravatarEmail;
   };
 
   handleRequest = async () => {
@@ -34,8 +33,9 @@ class Login extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { history } = this.props;
+    const { history, infoPlayer } = this.props;
     history.push('./playgame');
+    infoPlayer(this.state);
     this.handleRequest();
   };
 
@@ -47,14 +47,16 @@ class Login extends Component {
             type="text"
             id="name"
             data-testid="input-player-name"
+            placeholder="NOME"
             onChange={ this.handleInput }
           />
         </label>
-        <label htmlFor="email">
+        <label htmlFor="gravatarEmail">
           <input
             type="text"
-            id="email"
+            id="gravatarEmail"
             data-testid="input-gravatar-email"
+            placeholder="EMAIL"
             onChange={ this.handleInput }
           />
         </label>
@@ -73,6 +75,7 @@ class Login extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
   sendToken: (token) => dispatch(tokenAction(token)),
+  infoPlayer: (info) => dispatch(playerAction(info)),
 });
 
 Login.propTypes = {
