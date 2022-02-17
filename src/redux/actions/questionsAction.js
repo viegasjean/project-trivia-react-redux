@@ -1,27 +1,29 @@
+// import { fetchQuestions, fetchToken } from '../../servicesAPI/servicesAPI';
+
+export const REQUEST_QUESTIONS = 'REQUEST_QUESTIONS';
+export const GET_QUESTIONS = 'GET_QUESTIONS';
+export const FAILED_REQUEST = 'FAILED_REQUEST';
+
 // function requestQuestions() {
-//   return { type: 'REQUEST_QUESTIONS' };
+//   return { type: REQUEST_QUESTIONS };
 // }
 
-function getQuestions(data) {
-  return { type: 'GET_QUESTIONS', payload: data };
+export function getQuestions(data) {
+  return { type: GET_QUESTIONS, payload: data };
 }
 
 // function failedRequest(error) {
 //   return { type: 'FAILED_REQUEST', payload: error };
 // }
 
-function fetchQuestionsAction(token) {
-  return async (dispatch) => {
-    // dispatch(requestQuestions());
-    try {
-      const response = await fetch(`https://opentdb.com/api.php?amount=5&token=${token}`);
-      const data = await response.json();
-      console.log(data);
-      return dispatch(getQuestions(data.results));
-    } catch (error) {
-      // dispatch(failedRequest(error));
-    }
-  };
-}
+// const fetchQuestionsAction = (token) => async (dispatch) => {
+//   dispatch(requestQuestions());
+//   const allQuestions = await fetchQuestions(token);
+//   if (allQuestions.response_code !== 0) {
+//     const data = await fetchToken();
+//     return fetchQuestionsAction(data.token);
+//   }
+//   return dispatch(getQuestions(allQuestions.results));
+// };
 
-export default fetchQuestionsAction;
+// export default fetchQuestionsAction;
