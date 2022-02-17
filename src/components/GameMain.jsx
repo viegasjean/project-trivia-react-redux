@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { fetchQuestions, fetchToken } from '../servicesAPI/servicesAPI';
 
-import fetchQuestionsAction from '../redux/actions/questionsAction';
+import { getQuestions } from '../redux/actions/questionsAction';
 
 class GameMain extends Component {
   constructor() {
     super();
     this.state = {
-      arrOptions: [],
+      options: [],
     };
   }
 
@@ -16,39 +17,56 @@ class GameMain extends Component {
     this.getQuestions();
   }
 
-  getQuestions = () => {
+  getQuestions = async () => {
     const token = localStorage.getItem('token');
-    console.log(token);
-    // const { state } = this.props;
-    // console.log(state);
-    const { fetchQuestionsApi } = this.props;
-    fetchQuestionsApi(token);
-    this.handleOptions();
+    // const { fetchQuestionsApi } = this.props;
+    const { sendQuestions } = this.props;
+    const data = await fetchQuestions(token);
+    if (data.response_code !== 0) {
+      const dataToken = await fetchToken();
+      const questions = await fetchQuestions(dataToken.token);
+      return sendQuestions(questions.results);
+    }
+    console.log('socorro');
+    sendQuestions(data.results);
+    return this.handleOptions();
+    // await fetchQuestionsApi(token);
   }
 
   handleOptions = () => {
+    const MAGIC_NUMBER = 0.5;
     const { questions } = this.props;
-    if (questions.length > 0) {
-      const arrOptions = [questions[0].correct_answer, ...questions[0].incorrect_answers];
-      this.setState({ arrOptions });
-    }
+    console.log(questions);
+    // if (questions.length > 0) {
+    const arrOptions = [questions[0].correct_answer, ...questions[0].incorrect_answers];
+    const shuffleOptions = arrOptions.sort(() => Math.random() - MAGIC_NUMBER);
+    this.setState({ options: shuffleOptions });
+    // }
   };
 
   render() {
-    const { questions } = this.props;
-    const { arrOptions } = this.state;
-
+    const { questions, loading } = this.props;
+    const { options } = this.state;
     return (
       <section>
         <h5 data-testid="question-category">
-          {questions.length > 0 && questions[0].category}
+          {!loading && questions[0].category}
         </h5>
         <h5 data-testid="question-text">
-          {questions.length > 0 && questions[0].question}
+          {!loading && questions[0].question}
         </h5>
         <div data-testid="answer-options">
-          {console.log(arrOptions)}
-          {questions.length > 0 && arrOptions.map((option, index) => (
+          {options.map((option, index) => (
+            <button
+              data-testid={ (option === questions[0].correct_answer
+              ) ? 'correct-answer' : `wrong-answer-${index}` }
+              type="button"
+              key={ option }
+            >
+              {option}
+            </button>
+          ))}
+          {/* {options.map((option, index) => (
             <button
               data-testid={ (option === questions[0].correct_answer
               ) ? ('correct_answer') : (`wrong-answer-${index}`) }
@@ -57,18 +75,23 @@ class GameMain extends Component {
             >
               {option}
             </button>
-          ))}
+          ))} */}
         </div>
       </section>
     );
   }
 }
 
-const mapStateToProps = (state) => ({
-  questions: state.questionsReducer.questions,
-});
+const mapStateToProps = (state) => {
+  console.log(state);
+  return {
+    questions: state.questionsReducer.questions,
+    loading: state.questionsReducer.loading,
+  };
+};
 const mapDispatchToProps = (dispatch) => ({
-  fetchQuestionsApi: (token) => dispatch(fetchQuestionsAction(token)),
+  // fetchQuestionsApi: (token) => dispatch(fetchQuestionsAction(token)),
+  sendQuestions: (token) => dispatch(getQuestions(token)),
 });
 
 GameMain.propTypes = {

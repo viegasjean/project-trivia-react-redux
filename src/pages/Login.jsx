@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import tokenAction, { playerAction } from '../redux/actions';
+import { fetchToken } from '../servicesAPI/servicesAPI';
 
 class Login extends Component {
   constructor() {
@@ -24,9 +25,7 @@ class Login extends Component {
 
   handleRequest = async () => {
     const { sendToken } = this.props;
-    const url = 'https://opentdb.com/api_token.php?command=request';
-    const reponse = await fetch(url);
-    const data = await reponse.json();
+    const data = await fetchToken();
     localStorage.setItem('token', data.token);
     return sendToken(data.token);
   };
