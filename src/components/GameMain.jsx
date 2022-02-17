@@ -27,6 +27,7 @@ class GameMain extends Component {
       const questions = await fetchQuestions(dataToken.token);
       return sendQuestions(questions.results);
     }
+    console.log('socorro');
     sendQuestions(data.results);
     return this.handleOptions();
     // await fetchQuestionsApi(token);
