@@ -25,6 +25,9 @@ class GameMain extends Component {
       score: 0,
       classNameCorrect: CORRECT_ANSWER,
       classNameWrong: 'wrong-answer',
+      showButton: false,
+      questionNumber: 0,
+      options: [],
     };
   }
 
@@ -60,20 +63,22 @@ class GameMain extends Component {
     // }
     // await sendQuestions(data.results);
     const { fetchQuestionsApi } = this.props;
-    fetchQuestionsApi();
+    await fetchQuestionsApi();
+    this.handleOptions();
     this.handleCount();
   }
 
-  // handleOptions = () => {
-  //   const MAGIC_NUMBER = 0.5;
-  //   const { questions } = this.props;
-  //   console.log(questions);
-  //   if (questions.length > 0) {
-  //     const arrOptions = [questions[0].correct_answer, ...questions[0].incorrect_answers];
-  //     const shuffleOptions = arrOptions.sort(() => Math.random() - MAGIC_NUMBER);
-  //     this.setState({ options: shuffleOptions });
-  //   }
-  // };
+  handleOptions = () => {
+    const MAGIC_NUMBER = 0.5;
+    const { questions } = this.props;
+    const { questionNumber } = this.state;
+    if (questions.length > 0) {
+      const arrOptions = [questions[questionNumber].correct_answer,
+        ...questions[questionNumber].incorrect_answers];
+      const shuffleOptions = arrOptions.sort(() => Math.random() - MAGIC_NUMBER);
+      this.setState({ options: shuffleOptions });
+    }
+  };
 
   handleCount = () => {
     const myInterval = setInterval(() => {
@@ -90,14 +95,16 @@ class GameMain extends Component {
 
   handleAnswer = (option) => {
     const { questions } = this.props;
+    const { questionNumber } = this.state;
     // console.log(questions);
-    if (option === questions[0].correct_answer) return CORRECT_ANSWER;
+    if (option === questions[questionNumber].correct_answer) return CORRECT_ANSWER;
     return 'incorrect_answers';
   };
 
   handleLevel = () => {
     const { questions } = this.props;
-    const levelQuestion = questions[0].difficulty;
+    const { questionNumber } = this.state;
+    const levelQuestion = questions[questionNumber].difficulty;
     //     LEVELS.find(({ level, value }) => {
     //       if (levelQuestion === level) return value;
     //   });
@@ -128,6 +135,7 @@ class GameMain extends Component {
     this.setState({
       classNameCorrect: 'correct-answer-active',
       classNameWrong: 'wrong-answer-active',
+      showButton: true,
     });
   }
 
@@ -136,9 +144,23 @@ class GameMain extends Component {
     this.handleScore(event);
   };
 
+  nextQuestion = () => {
+    console.log('clicou');
+    const { questionNumber } = this.state;
+    this.setState({
+      questionNumber: questionNumber + 1,
+      showButton: false,
+      classNameWrong: '',
+      classNameCorrect: '',
+    });
+    this.handleOptions();
+  }
+
   render() {
-    const { questions, loading, options } = this.props;
-    const { timer, classNameCorrect, classNameWrong } = this.state;
+    const { questions, loading } = this.props;
+    const { timer, classNameCorrect,
+      classNameWrong, showButton, questionNumber, options } = this.state;
+    const question = questions[questionNumber];
     // const { options } = this.state;
     // const { loading } = this.props;
 
@@ -149,17 +171,17 @@ class GameMain extends Component {
           {timer}
         </div>
         <h5 data-testid="question-category">
-          {questions[0].category}
+          {question.category}
         </h5>
         <h5 data-testid="question-text">
-          {questions[0].question}
+          {question.question}
         </h5>
         <div data-testid="answer-options">
           {options.length > 0 && options.map((option, index) => (
             <button
-              className={ (option === questions[0].correct_answer
+              className={ (option === question.correct_answer
               ) ? `${classNameCorrect}` : `${classNameWrong}` }
-              data-testid={ (option === questions[0].correct_answer
+              data-testid={ (option === question.correct_answer
               ) ? 'correct-answer' : `wrong-answer-${index}` }
               type="button"
               // className={ timer === 0 && 'wrong-answer' }
@@ -182,6 +204,14 @@ class GameMain extends Component {
               {option}
             </button>
           ))} */}
+          { showButton && (
+            <button
+              type="button"
+              onClick={ this.nextQuestion }
+              data-testid="btn-next"
+            >
+              NEXT
+            </button>)}
         </div>
       </section>
     );

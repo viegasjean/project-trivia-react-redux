@@ -20,21 +20,22 @@ export function getQuestions(data) {
 //   return { type: 'FAILED_REQUEST', payload: error };
 // }
 
-const actionOptions = (payload) => ({
-  type: OPTIONS,
-  payload,
-});
+// const actionOptions = (payload) => ({
+//   type: OPTIONS,
+//   payload,
+// });
 
-const handleOptions = (questions) => {
-  const MAGIC_NUMBER = 0.5;
-  const arrOptions = [questions[0].correct_answer, ...questions[0].incorrect_answers];
-  const shuffleOptions = arrOptions.sort(() => Math.random() - MAGIC_NUMBER);
-  return (shuffleOptions);
-};
+// const handleOptions = (questions) => {
+//   const MAGIC_NUMBER = 0.5;
+//   const arrOptions = [questions[0].correct_answer, ...questions[0].incorrect_answers];
+//   const shuffleOptions = arrOptions.sort(() => Math.random() - MAGIC_NUMBER);
+//   return (shuffleOptions);
+// };
+
 const fetchQuestionsAction = () => async (dispatch) => {
   dispatch(requestQuestions());
   let token = localStorage.getItem('token');
-  let opt = [];
+  // let opt = [];
   if (token === null || token === undefined) {
     const dataToken = await fetchToken();
     localStorage.setItem('token', dataToken.token);
@@ -48,12 +49,12 @@ const fetchQuestionsAction = () => async (dispatch) => {
     dispatch(tokenAction(dataToken.token));
     token = dataToken.token;
     allQuestions = await fetchQuestions(token);
-    opt = handleOptions(allQuestions.results);
+    // opt = handleOptions(allQuestions.results);
     // dispatch(actionOptions(opt));
     // return dispatch(getQuestions(allQuestions.results));
   }
-  opt = handleOptions(allQuestions.results);
-  dispatch(actionOptions(opt));
+  // opt = handleOptions(allQuestions.results);
+  // dispatch(actionOptions(opt));
   return dispatch(getQuestions(allQuestions.results));
 };
 
