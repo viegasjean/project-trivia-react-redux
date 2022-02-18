@@ -2,7 +2,7 @@ import {
   GET_QUESTIONS,
   REQUEST_QUESTIONS,
   FAILED_REQUEST,
-  OPTIONS
+  OPTIONS,
 } from '../actions/questionsAction';
 
 const INITIAL_STATE = {

@@ -12,8 +12,8 @@ class GameMain extends Component {
   constructor() {
     super();
     this.state = {
-      questions: [],
-      options: [],
+      // questions: [],
+      // options: [],
       count: 10,
     };
   }

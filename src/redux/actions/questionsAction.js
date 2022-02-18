@@ -6,6 +6,8 @@ export const GET_QUESTIONS = 'GET_QUESTIONS';
 export const FAILED_REQUEST = 'FAILED_REQUEST';
 export const OPTIONS = 'OPTIONS';
 
+const FAILED_CODE = 3;
+
 function requestQuestions() {
   return { type: REQUEST_QUESTIONS };
 }
@@ -29,7 +31,6 @@ const handleOptions = (questions) => {
   const shuffleOptions = arrOptions.sort(() => Math.random() - MAGIC_NUMBER);
   return (shuffleOptions);
 };
-
 const fetchQuestionsAction = () => async (dispatch) => {
   dispatch(requestQuestions());
   let token = localStorage.getItem('token');
@@ -41,7 +42,7 @@ const fetchQuestionsAction = () => async (dispatch) => {
     token = dataToken.token;
   }
   let allQuestions = await fetchQuestions(token);
-  if (allQuestions.response_code === 3) {
+  if (allQuestions.response_code === FAILED_CODE) {
     const dataToken = await fetchToken();
     localStorage.setItem('token', dataToken.token);
     dispatch(tokenAction(dataToken.token));
