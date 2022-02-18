@@ -115,9 +115,10 @@ class GameMain extends Component {
         assertions: prevState.assertions + 1,
         score: prevState.score + TRYBE_MAGIC + (timer * getDifficultValue),
       }), () => {
-        const { sendScoreBoard } = this.props;
+        const { sendScoreBoard, playerInfo } = this.props;
         const { score, assertions } = this.state;
         sendScoreBoard({ score, assertions });
+        localStorage.setItem('player', JSON.stringify(playerInfo));
       });
     }
   };
@@ -187,11 +188,12 @@ class GameMain extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.token);
+  console.log(state);
   return {
     questions: state.questionsReducer.questions,
     tokenState: state.token,
     loading: state.questionsReducer.loading,
+    playerInfo: state.player,
     options: state.questionsReducer.options,
   };
 };
