@@ -23,7 +23,7 @@ class GameMain extends Component {
       timer: 30,
       assertions: 0,
       score: 0,
-      classNameCorrect: 'correct-answer',
+      classNameCorrect: CORRECT_ANSWER,
       classNameWrong: 'wrong-answer',
     };
   }
