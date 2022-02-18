@@ -15,6 +15,8 @@ class GameMain extends Component {
       // questions: [],
       // options: [],
       count: 10,
+      classNameCorrect: 'correct-answer',
+      classNameWrong: 'wrong-answer',
     };
   }
 
@@ -78,9 +80,16 @@ class GameMain extends Component {
     }, TIME_INTERVAL);
   };
 
+  toggleAnswer = () => {
+    this.setState({
+      classNameCorrect: 'correct-answer-active',
+      classNameWrong: 'wrong-answer-active',
+    });
+  }
+
   render() {
     const { questions, loading, options } = this.props;
-    const { count } = this.state;
+    const { count, classNameCorrect, classNameWrong } = this.state;
     // const { options } = this.state;
     // const { loading } = this.props;
 
@@ -99,12 +108,15 @@ class GameMain extends Component {
         <div data-testid="answer-options">
           {options.length > 0 && options.map((option, index) => (
             <button
+              className={ (option === questions[0].correct_answer
+              ) ? `${classNameCorrect}` : `${classNameWrong}` }
               data-testid={ (option === questions[0].correct_answer
               ) ? 'correct-answer' : `wrong-answer-${index}` }
               type="button"
-              className={ count === 0 && 'wrong-answer' }
+              // className={ count === 0 && 'wrong-answer' }
               disabled={ count === 0 }
               key={ option }
+              onClick={ () => this.toggleAnswer() }
             >
               {option}
             </button>
