@@ -4,17 +4,25 @@ import { connect } from 'react-redux';
 // import { fetchQuestions, fetchToken } from '../servicesAPI/servicesAPI';
 
 // import { getQuestions } from '../redux/actions/questionsAction';
-
+import { playerAction } from '../redux/actions';
 import fetchQuestionsAction from '../redux/actions/questionsAction';
 
 const TIME_INTERVAL = 1000;
+const CORRECT_ANSWER = 'correct-answer';
+const TRYBE_MAGIC = 10;
+const LEVELS = [
+  { level: 'hard', value: 3 },
+  { level: 'medium', value: 2 },
+  { level: 'easy', value: 1 }];
 class GameMain extends Component {
   constructor() {
     super();
     this.state = {
       // questions: [],
       // options: [],
-      count: 10,
+      timer: 30,
+      assertions: 0,
+      score: 0,
       classNameCorrect: 'correct-answer',
       classNameWrong: 'wrong-answer',
     };
@@ -70,14 +78,48 @@ class GameMain extends Component {
   handleCount = () => {
     const myInterval = setInterval(() => {
       this.setState((prevState) => ({
-        count: prevState.count - 1,
+        timer: prevState.timer - 1,
       }), () => {
-        const { count } = this.state;
-        if (count === 0) {
+        const { timer } = this.state;
+        if (timer === 0) {
           clearInterval(myInterval);
         }
       });
     }, TIME_INTERVAL);
+  };
+
+  handleAnswer = (option) => {
+    const { questions } = this.props;
+    // console.log(questions);
+    if (option === questions[0].correct_answer) return CORRECT_ANSWER;
+    return 'incorrect_answers';
+  };
+
+  handleLevel = () => {
+    const { questions } = this.props;
+    const levelQuestion = questions[0].difficulty;
+    //     LEVELS.find(({ level, value }) => {
+    //       if (levelQuestion === level) return value;
+    //   });
+    // }
+    if (levelQuestion === LEVELS[0].level) return LEVELS[0].value;
+    if (levelQuestion === LEVELS[1].level) return LEVELS[1].value;
+    if (levelQuestion === LEVELS[2].level) return LEVELS[2].value;
+  }
+
+  handleScore = ({ target }) => {
+    const { timer } = this.state;
+    if (target.name === CORRECT_ANSWER) {
+      const getDifficultValue = this.handleLevel();
+      this.setState((prevState) => ({
+        assertions: prevState.assertions + 1,
+        score: prevState.score + TRYBE_MAGIC + (timer * getDifficultValue),
+      }), () => {
+        const { sendScoreBoard } = this.props;
+        const { score, assertions } = this.state;
+        sendScoreBoard({ score, assertions });
+      });
+    }
   };
 
   toggleAnswer = () => {
@@ -87,9 +129,14 @@ class GameMain extends Component {
     });
   }
 
+  handleClickFunctions = (event) => {
+    this.toggleAnswer();
+    this.handleScore(event);
+  };
+
   render() {
     const { questions, loading, options } = this.props;
-    const { count, classNameCorrect, classNameWrong } = this.state;
+    const { timer, classNameCorrect, classNameWrong } = this.state;
     // const { options } = this.state;
     // const { loading } = this.props;
 
@@ -97,7 +144,7 @@ class GameMain extends Component {
     return (
       <section>
         <div>
-          {count}
+          {timer}
         </div>
         <h5 data-testid="question-category">
           {questions[0].category}
@@ -113,10 +160,12 @@ class GameMain extends Component {
               data-testid={ (option === questions[0].correct_answer
               ) ? 'correct-answer' : `wrong-answer-${index}` }
               type="button"
-              // className={ count === 0 && 'wrong-answer' }
-              disabled={ count === 0 }
+              // className={ timer === 0 && 'wrong-answer' }
+              disabled={ timer === 0 }
+              name={ this.handleAnswer(option) }
+              // onClick={ this.handleScore }
               key={ option }
-              onClick={ () => this.toggleAnswer() }
+              onClick={ this.handleClickFunctions }
             >
               {option}
             </button>
@@ -148,6 +197,7 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => ({
   fetchQuestionsApi: (token) => dispatch(fetchQuestionsAction(token)),
+  sendScoreBoard: (scoreboard) => dispatch(playerAction(scoreboard)),
   // sendQuestions: (token) => dispatch(getQuestions(token)),
 });
 
