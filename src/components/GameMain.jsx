@@ -119,6 +119,7 @@ class GameMain extends Component {
         const { score, assertions } = this.state;
         sendScoreBoard({ score, assertions });
         localStorage.setItem('player', JSON.stringify(playerInfo));
+        console.log('localStorage');
       });
     }
   };
