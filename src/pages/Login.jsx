@@ -30,8 +30,8 @@ class Login extends Component {
     return sendToken(data.token);
   };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
+  handleSubmit = () => {
+    // e.preventDefault();
     const { history, infoPlayer } = this.props;
     history.push('./playgame');
     infoPlayer(this.state);

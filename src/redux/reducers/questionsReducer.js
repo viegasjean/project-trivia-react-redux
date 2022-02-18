@@ -2,10 +2,12 @@ import {
   GET_QUESTIONS,
   REQUEST_QUESTIONS,
   FAILED_REQUEST,
+  OPTIONS
 } from '../actions/questionsAction';
 
 const INITIAL_STATE = {
   questions: [],
+  options: [],
   loading: true,
   error: '',
 };
@@ -29,6 +31,11 @@ function questionsReducer(state = INITIAL_STATE, action) {
       ...state,
       loading: true,
       erro: action.payload,
+    };
+  case OPTIONS:
+    return {
+      ...state,
+      options: action.payload,
     };
   default:
     return state;
