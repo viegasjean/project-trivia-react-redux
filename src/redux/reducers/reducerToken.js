@@ -1,13 +1,11 @@
-import { TOKEN_PLAYER } from '../actions';
+import { GET_TOKEN } from '../actions';
 
-const INITIAL_STATE = {
-  token: '',
-};
+const INITIAL_STATE = '';
 
 const token = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-  case TOKEN_PLAYER:
-    return action.payload;
+  case GET_TOKEN:
+    return action.token;
   default:
     return state;
   }

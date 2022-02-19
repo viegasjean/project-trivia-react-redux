@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import tokenAction, { playerAction } from '../redux/actions';
+import { playerAction, tokenAction } from '../redux/actions';
 import { fetchToken } from '../servicesAPI/servicesAPI';
+import fetchQuestionsAction from '../redux/actions/questionsAction';
+// import { fetchToken } from '../servicesAPI/servicesAPI';
 
 class Login extends Component {
   constructor() {
@@ -23,19 +25,11 @@ class Login extends Component {
     return name && gravatarEmail;
   };
 
-  handleRequest = async () => {
-    const { sendToken } = this.props;
-    const data = await fetchToken();
-    localStorage.setItem('token', data.token);
-    return sendToken(data.token);
-  };
-
   handleSubmit = () => {
-    // e.preventDefault();
-    const { history, infoPlayer } = this.props;
-    history.push('./playgame');
+    const { infoPlayer, sendToken, history } = this.props;
     infoPlayer(this.state);
-    this.handleRequest();
+    fetchToken().then((token) => sendToken(token));
+    history.push('./playgame');
   };
 
   render() {
@@ -90,7 +84,10 @@ Login.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
   sendToken: (token) => dispatch(tokenAction(token)),
+  getQuestions: (token) => dispatch(fetchQuestionsAction(token)),
   infoPlayer: (info) => dispatch(playerAction(info)),
 });
 
-export default connect(null, mapDispatchToProps)(Login);
+const mapStateToProps = ({ token }) => ({ token });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

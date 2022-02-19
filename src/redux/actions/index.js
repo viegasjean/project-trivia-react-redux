@@ -1,12 +1,10 @@
-export const TOKEN_PLAYER = 'TOKEN_PLAYER';
+export const GET_TOKEN = 'GET_TOKEN';
 export const PLAYER_DATA = 'PLAYER_DATA';
 
-const tokenAction = (payload) => ({
-  type: TOKEN_PLAYER,
-  payload,
+export const tokenAction = (token) => ({
+  type: GET_TOKEN,
+  token,
 });
-
-export default tokenAction;
 
 export const playerAction = (payload) => ({
   type: PLAYER_DATA,

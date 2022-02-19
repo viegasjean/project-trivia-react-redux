@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import { fetchQuestions, fetchToken } from '../servicesAPI/servicesAPI';
-
+import { Redirect } from 'react-router-dom';
+import { fetchQuestions, fetchToken } from '../servicesAPI/servicesAPI';
 // import { getQuestions } from '../redux/actions/questionsAction';
-import { playerAction } from '../redux/actions';
+import { tokenAction, playerAction } from '../redux/actions';
 import fetchQuestionsAction from '../redux/actions/questionsAction';
 
 const TIME_INTERVAL = 1000;
@@ -18,7 +18,7 @@ class GameMain extends Component {
   constructor() {
     super();
     this.state = {
-      // questions: [],
+      questions: [],
       // options: [],
       timer: 30,
       assertions: 0,
@@ -31,50 +31,53 @@ class GameMain extends Component {
     };
   }
 
-  componentDidMount() {
-    this.getQuestions();
+  componentDidUpdate() {
+    const { questions } = this.state;
+    if (questions.length === 0) this.getQuestions();
   }
 
   getQuestions = async () => {
-    // let token = localStorage.getItem('token');
-    // console.log(token);
-    // const { fetchQuestionsApi } = this.props;
-    // const { sendQuestions } = this.props;
-    // if (token === null || token === undefined) {
-    //   const dataToken = await fetchToken();
-    //   token = dataToken.token;
-    // }
-    // const data = await fetchQuestions(token);
-    // console.log(data);
-    // if (data.response_code === 3) {
-    //   const dataToken = await fetchToken();
-    //   console.log(dataToken.token);
-    //   const questions = await fetchQuestions(dataToken.token);
-    //   console.log(questions);
-
-    // this.setState({ questions: questions.results }, () => {
-    //   this.handleOptions();
-    // });
-    // return sendQuestions(questions.results);
-    // } else {
-    // this.setState({ questions: data.results }, () => {
-    //   this.handleOptions();
-    // });
-    // }
-    // await sendQuestions(data.results);
-    const { fetchQuestionsApi } = this.props;
-    await fetchQuestionsApi();
-    this.handleOptions();
+    const { tokenState, sendToken } = this.props;
     this.handleCount();
+    const res = await fetchQuestions(tokenState);
+    if (res.response_code === 0) this.setState({ questions: res.results });
+    if (res.response_code !== 0) {
+      const token = await fetchToken();
+      sendToken(token);
+      fetchQuestions(token);
+    }
+    this.handleOptions();
+
+  /*   fetchQuestions(tokenState)
+      .then((res) => {
+        console.log('ress', res);
+        if (res.response_code === 0) {
+          this.setState({
+            questions: res.results },
+          () => this.handleOptions());
+        }
+        if (res.response_code === 3) {
+          fetchToken().then((token) => {
+            console.log('rechamaToken', token);
+            console.log('rechamaTokenaaaa', res);
+            sendToken(token);
+            this.fetchQuestions(token);
+          });
+        }
+      });
+    this.handleCount(); */
   }
 
   handleOptions = () => {
+    const { questions } = this.state;
     const MAGIC_NUMBER = 0.5;
-    const { questions } = this.props;
     const { questionNumber } = this.state;
     if (questions.length > 0) {
-      const arrOptions = [questions[questionNumber].correct_answer,
-        ...questions[questionNumber].incorrect_answers];
+      const question = questions[questionNumber];
+      const correctAnswer = { text: question.correct_answer, correct: true };
+      const incorrectAnswers = question.incorrect_answers
+        .map((incAswr) => ({ text: incAswr, correct: false }));
+      const arrOptions = [correctAnswer, ...incorrectAnswers];
       const shuffleOptions = arrOptions.sort(() => Math.random() - MAGIC_NUMBER);
       this.setState({ options: shuffleOptions });
     }
@@ -93,16 +96,14 @@ class GameMain extends Component {
     }, TIME_INTERVAL);
   };
 
-  handleAnswer = (option) => {
-    const { questions } = this.props;
-    const { questionNumber } = this.state;
+  handleAnswer = (correct) => {
     // console.log(questions);
-    if (option === questions[questionNumber].correct_answer) return CORRECT_ANSWER;
+    if (correct) return CORRECT_ANSWER;
     return 'incorrect_answers';
   };
 
   handleLevel = () => {
-    const { questions } = this.props;
+    const { questions } = this.state;
     const { questionNumber } = this.state;
     const levelQuestion = questions[questionNumber].difficulty;
     //     LEVELS.find(({ level, value }) => {
@@ -145,7 +146,6 @@ class GameMain extends Component {
   };
 
   nextQuestion = () => {
-    console.log('clicou');
     const { questionNumber } = this.state;
     this.setState({
       questionNumber: questionNumber + 1,
@@ -157,14 +157,15 @@ class GameMain extends Component {
   }
 
   render() {
-    const { questions, loading } = this.props;
+    const feedbackRedirect = 5;
     const { timer, classNameCorrect,
-      classNameWrong, showButton, questionNumber, options } = this.state;
+      classNameWrong, showButton, questionNumber, options, questions } = this.state;
     const question = questions[questionNumber];
-    // const { options } = this.state;
-    // const { loading } = this.props;
+    if (questions.length === 0) return <h1> loading... </h1>;
+    console.log('renderQuestions', questions);
 
-    if (loading) return <h1>loading</h1>;
+    if (questionNumber === feedbackRedirect) return <Redirect to="/feedback" />;
+
     return (
       <section>
         <div>
@@ -179,19 +180,19 @@ class GameMain extends Component {
         <div data-testid="answer-options">
           {options.length > 0 && options.map((option, index) => (
             <button
-              className={ (option === question.correct_answer
+              className={ (option.correct
               ) ? `${classNameCorrect}` : `${classNameWrong}` }
-              data-testid={ (option === question.correct_answer
+              data-testid={ (option.correct
               ) ? 'correct-answer' : `wrong-answer-${index}` }
               type="button"
               // className={ timer === 0 && 'wrong-answer' }
               disabled={ timer === 0 }
-              name={ this.handleAnswer(option) }
+              name={ this.handleAnswer(option.correct) }
               // onClick={ this.handleScore }
-              key={ option }
+              key={ option.text }
               onClick={ this.handleClickFunctions }
             >
-              {option}
+              {option.text}
             </button>
           ))}
           {/* {options.map((option, index) => (
@@ -219,9 +220,10 @@ class GameMain extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
+  console.log('state na gameMain', state);
   return {
     questions: state.questionsReducer.questions,
+    responseCode: state.questionsReducer.responseCode,
     tokenState: state.token,
     loading: state.questionsReducer.loading,
     playerInfo: state.player,
@@ -231,6 +233,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   fetchQuestionsApi: (token) => dispatch(fetchQuestionsAction(token)),
   sendScoreBoard: (scoreboard) => dispatch(playerAction(scoreboard)),
+  sendToken: (token) => dispatch(tokenAction(token)),
   // sendQuestions: (token) => dispatch(getQuestions(token)),
 });
 
