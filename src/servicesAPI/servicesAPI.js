@@ -1,12 +1,9 @@
 export const fetchToken = async () => {
-  try {
-    const url = 'https://opentdb.com/api_token.php?command=request';
-    const response = await fetch(url);
-    const data = await response.json();
-    return data;
-  } catch (e) {
-    return e;
-  }
+  const url = 'https://opentdb.com/api_token.php?command=request';
+  const response = await fetch(url);
+  const data = await response.json();
+  console.log(data);
+  return data.token;
 };
 
 export const fetchQuestions = async (token) => {

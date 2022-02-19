@@ -10,9 +10,7 @@ const initialState = {
 const player = (state = initialState, action) => {
   switch (action.type) {
   case PLAYER_DATA:
-    console.log(action.payload);
     return { ...state, ...action.payload };
-
   default:
     return state;
   }

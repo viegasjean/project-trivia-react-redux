@@ -2,12 +2,11 @@ import {
   GET_QUESTIONS,
   REQUEST_QUESTIONS,
   FAILED_REQUEST,
-  OPTIONS,
 } from '../actions/questionsAction';
 
 const INITIAL_STATE = {
   questions: [],
-  options: [],
+  responseCode: 'aaaa',
   loading: true,
   error: '',
 };
@@ -20,10 +19,11 @@ function questionsReducer(state = INITIAL_STATE, action) {
       loading: true,
     };
   case GET_QUESTIONS:
-    console.log(action.type);
+    console.log('red', action.payload);
     return {
       ...state,
-      questions: action.payload,
+      questions: action.payload.results,
+      responseCode: action.payload.response_code,
       loading: false,
     };
   case FAILED_REQUEST:
@@ -31,11 +31,6 @@ function questionsReducer(state = INITIAL_STATE, action) {
       ...state,
       loading: true,
       erro: action.payload,
-    };
-  case OPTIONS:
-    return {
-      ...state,
-      options: action.payload,
     };
   default:
     return state;
