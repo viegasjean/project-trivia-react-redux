@@ -32,19 +32,19 @@ class Feedback extends Component {
           src={ `https://www.gravatar.com/avatar/${hash}` }
           alt="minha foto"
         />
-        <h5 data-testid="header-player-name">Name: {name}</h5>
-        <h5 data-testid="header-score">Score: {score}</h5>
+        <h5 data-testid="header-player-name">Name: { name }</h5>
+        <h5 data-testid="header-score">Score: { score }</h5>
         <h1 data-testid="feedback-text">
           { (hits < THRE) ? 'Could be better...' : 'Well Done!' }
         </h1>
 
-        <div data-testid="feedback-total-score">Score? : {score}</div>
-        <div data-testid="feedback-total-question">Hits: {hits}</div>
+        <div data-testid="feedback-total-score">Score? : { score }</div>
+        <div data-testid="feedback-total-question">Hits: { hits }</div>
 
         <button
           type="button"
           data-testid="btn-play-again"
-          onClick={ () => history.push('/')}
+          onClick={ () => history.push('/') }
         >
           Play Again
         </button>
