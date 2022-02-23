@@ -1,45 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import md5 from 'crypto-js/md5';
-import PropTypes from 'prop-types';
+import GameHeader from '../components/GameHeader';
+import { addToRanking } from '../servicesAPI/ranking';
 
 class Feedback extends Component {
-  constructor() {
-    super();
-    this.state = {
-      hash: '',
-    };
-  }
-
   componentDidMount() {
-    this.handleEncription();
+    this.saveToRanking();
   }
 
-  handleEncription = () => {
-    const { gravatarEmail } = this.props;
-    const generateHash = md5(gravatarEmail).toString();
-    this.setState({ hash: generateHash });
-  };
+  saveToRanking() {
+    const { name, score } = this.props;
+    addToRanking(name, score);
+  }
 
   render() {
-    const { hash } = this.state;
-    const { name, score, hits, history } = this.props;
     const THRE = 3;
+    const { hits, score, history } = this.props;
     return (
-      <div>
-        <img
-          data-testid="header-profile-picture"
-          src={ `https://www.gravatar.com/avatar/${hash}` }
-          alt="minha foto"
-        />
-        <h5 data-testid="header-player-name">Name: { name }</h5>
-        <h5 data-testid="header-score">Score: { score }</h5>
+      <>
+        <GameHeader />
         <h1 data-testid="feedback-text">
           { (hits < THRE) ? 'Could be better...' : 'Well Done!' }
         </h1>
 
-        <div data-testid="feedback-total-score">Score? : { score }</div>
-        <div data-testid="feedback-total-question">Hits: { hits }</div>
+        <h2 data-testid="feedback-total-score">{ score }</h2>
+        <h2 data-testid="feedback-total-question">{ hits }</h2>
 
         <button
           type="button"
@@ -48,23 +33,25 @@ class Feedback extends Component {
         >
           Play Again
         </button>
-      </div>
+        <button
+          type="button"
+          data-testid="btn-ranking"
+          onClick={ () => history.push('/ranking') }
+        >
+          Ranking
+        </button>
+      </>
     );
   }
 }
 
+Feedback.propTypes = {
+}.isRequired;
+
 const mapStateToProps = ({ player }) => ({
-  gravatarEmail: player.gravatarEmail,
   name: player.name,
   score: player.score,
   hits: player.assertions,
 });
-
-Feedback.propTypes = {
-  gravatarEmail: PropTypes.string,
-  history: PropTypes.shape({
-    push: PropTypes.func,
-  }).isRequired,
-}.isRequired;
 
 export default connect(mapStateToProps)(Feedback);

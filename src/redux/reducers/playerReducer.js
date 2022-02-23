@@ -2,7 +2,7 @@ import { PLAYER_DATA } from '../actions';
 
 const initialState = {
   name: '',
-  assertions: '',
+  assertions: 0,
   score: 0,
   gravatarEmail: '',
 };

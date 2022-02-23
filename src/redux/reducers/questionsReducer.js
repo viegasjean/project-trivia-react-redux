@@ -19,7 +19,6 @@ function questionsReducer(state = INITIAL_STATE, action) {
       loading: true,
     };
   case GET_QUESTIONS:
-    console.log('red', action.payload);
     return {
       ...state,
       questions: action.payload.results,
