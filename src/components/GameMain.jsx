@@ -127,7 +127,6 @@ class GameMain extends Component {
         const { score, assertions } = this.state;
         sendScoreBoard({ score, assertions });
         localStorage.setItem('player', JSON.stringify(playerInfo));
-        console.log('localStorage');
       });
     }
   };
@@ -162,7 +161,6 @@ class GameMain extends Component {
       classNameWrong, showButton, questionNumber, options, questions } = this.state;
     const question = questions[questionNumber];
     if (questions.length === 0) return <h1> loading... </h1>;
-    console.log('renderQuestions', questions);
 
     if (questionNumber === feedbackRedirect) return <Redirect to="/feedback" />;
 
@@ -219,17 +217,15 @@ class GameMain extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  console.log('state na gameMain', state);
-  return {
-    questions: state.questionsReducer.questions,
-    responseCode: state.questionsReducer.responseCode,
-    tokenState: state.token,
-    loading: state.questionsReducer.loading,
-    playerInfo: state.player,
-    options: state.questionsReducer.options,
-  };
-};
+const mapStateToProps = (state) => ({
+  questions: state.questionsReducer.questions,
+  responseCode: state.questionsReducer.responseCode,
+  tokenState: state.token,
+  loading: state.questionsReducer.loading,
+  playerInfo: state.player,
+  options: state.questionsReducer.options,
+});
+
 const mapDispatchToProps = (dispatch) => ({
   fetchQuestionsApi: (token) => dispatch(fetchQuestionsAction(token)),
   sendScoreBoard: (scoreboard) => dispatch(playerAction(scoreboard)),

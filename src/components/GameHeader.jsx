@@ -42,7 +42,6 @@ const mapStateToProps = (state) => ({
   gravatarEmail: state.player.gravatarEmail,
   name: state.player.name,
   score: state.player.score,
-
 });
 
 GameHeader.propTypes = {
